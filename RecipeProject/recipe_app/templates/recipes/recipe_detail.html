@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+{% load form_tags %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row justify-content-center animate__animated animate__fadeInUp">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="card-title mb-3">{{ recipe.title }}</h2>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <span class="badge bg-{% if recipe.category == 'veg' %}success{% else %}danger{% endif %} rounded-pill px-3 py-2 me-2">
+                                {{ recipe.get_category_display }}
+                            </span>
+                            <span class="text-muted"><i class="bi bi-clock"></i> {{ recipe.cooking_time }} min</span>
+                        </div>
+                        {% if user == recipe.created_by or user.is_staff or user.is_superuser %}
+                        <div>
+                            <a href="{% url 'recipe_update' pk=recipe.pk %}" class="btn btn-outline-warning btn-sm">Edit</a>
+                            <a href="{% url 'recipe_delete' pk=recipe.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if recipe.image %}
+                    <div class="text-center mb-4">
+                        <img src="{{ recipe.image.url }}" class="img-fluid rounded shadow" alt="Recipe Image" style="max-height: 400px; width: auto;">
+                    </div>
+                    {% endif %}
+
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <h5 class="text-center">Calories</h5>
+                                <p class="text-center mb-0">{{ recipe.calorie_count }} kcal</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <h5 class="text-center">Allergens</h5>
+                                <p class="text-center mb-0">{{ recipe.allergic_content|default:"None" }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <h5 class="text-center">Author</h5>
+                                <p class="text-center mb-0">{{ recipe.created_by.username }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="border-bottom pb-2">Ingredients</h4>
+                        <ul class="list-group list-group-flush">
+                            {% for ingredient in recipe.get_ingredients_list %}
+                            <li class="list-group-item d-flex align-items-center">
+                                <span class="me-2">•</span>
+                                <span>{{ ingredient }}</span>
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item">No ingredients available.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4 class="border-bottom pb-2">Cooking Method</h4>
+                        <ol class="list-group list-group-numbered list-group-flush">
+                            {% for step in recipe.get_cooking_method_list %}
+                            <li class="list-group-item">{{ step }}</li>
+                            {% empty %}
+                            <li class="list-group-item">No cooking method available.</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h3 class="mb-4">Comments</h3>
+
+                    {% for comment in comments %}
+                    <div class="mb-3 p-3 bg-light rounded animate-comment">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ comment.user.username }}</strong>
+                                <small class="text-muted d-block">{{ comment.created_at|timesince }} ago</small>
+                            </div>
+
+                            {% if user == comment.user %}
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'edit_comment' comment.pk %}" class="btn btn-outline-primary">Edit</a>
+                                <a href="{% url 'delete_comment' comment.pk %}" class="btn btn-outline-danger">Delete</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <p class="mb-0 mt-2">{{ comment.content }}</p>
+                    </div>
+                    {% empty %}
+                    <div class="alert alert-info">No comments yet.</div>
+                    {% endfor %}
+
+                    {% if user.is_authenticated %}
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="{{ comment_form.content.id_for_label }}" class="form-label">Add Comment</label>
+                            {{ comment_form.content|add_class:"form-control" }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    </form>
+                    {% else %}
+                    <div class="alert alert-warning mt-4">
+                        You must <a href="{% url 'login' %}">login</a> to post a comment.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-5px);
+    }
+    
+    .img-fluid.rounded {
+        transition: all 0.5s ease;
+        box-shadow: var(--shadow-md);
+    }
+    
+    .img-fluid.rounded:hover {
+        transform: scale(1.02);
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .bg-light.rounded {
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .bg-light.rounded:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .list-group-item {
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+    }
+    
+    .list-group-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 3px;
+        background: var(--primary-color);
+        transform: scaleY(0);
+        transform-origin: bottom;
+        transition: transform 0.3s ease;
+    }
+    
+    .list-group-item:hover {
+        background-color: rgba(95, 158, 160, 0.05);
+        transform: translateX(8px);
+    }
+    
+    .list-group-item:hover::before {
+        transform: scaleY(1);
+    }
+    
+    .animate-comment {
+        animation: fadeInUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.3s ease;
+    }
+    
+    .animate-comment:hover {
+        box-shadow: var(--shadow-md);
+        transform: translateY(-3px);
+    }
+    
+    .btn-outline-warning, 
+    .btn-outline-danger, 
+    .btn-outline-primary {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+    
+    .btn-outline-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-primary);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+    
+    .btn-outline-warning::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+    
+    .btn-outline-danger::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+    
+    .btn-outline-primary:hover,
+    .btn-outline-warning:hover,
+    .btn-outline-danger:hover {
+        color: white;
+        border-color: transparent;
+        transform: scale(1.05);
+    }
+    
+    .btn-outline-primary:hover::before,
+    .btn-outline-warning:hover::before,
+    .btn-outline-danger:hover::before {
+        opacity: 1;
+    }
+    
+    .btn-primary {
+        background: var(--gradient-primary);
+        border: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-secondary);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+    
+    .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .btn-primary:hover::before {
+        opacity: 1;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Dark mode adjustments */
+    body.dark-mode .bg-light {
+        background-color: #2d2d2d !important;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .list-group-item {
+        background-color: #2d2d2d;
+        color: #e0e0e0;
+    }
+    
+    body.dark-mode .list-group-item:hover {
+        background-color: #3d3d3d;
+    }
+</style>
+
+{% endblock %}

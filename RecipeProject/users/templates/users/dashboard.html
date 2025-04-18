@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- User Profile Section -->
+    <div class="card mb-5 shadow-lg border-0 rounded-4 overflow-hidden animate__animated animate__fadeIn">
+        <div class="card-body p-4" style="background: linear-gradient(135deg, rgba(248,249,250,0.9) 0%, rgba(233,236,239,0.9) 100%);">
+            <div class="row align-items-center">
+                <div class="col-md-3 text-center animate__animated animate__zoomIn">
+                    {% if user.profile_picture %}
+                        <img src="{{ user.profile_picture.url }}" class="rounded-circle border border-4 border-white shadow mb-3" width="150" height="150" alt="Profile Picture" style="object-fit: cover; transition: all 0.3s ease;">
+                    {% else %}
+                        <img src="/static/images/default-profile.jpg" class="rounded-circle border border-4 border-white shadow mb-3" width="150" height="150" alt="Default Profile Picture" style="object-fit: cover; transition: all 0.3s ease;">
+                    {% endif %}
+                </div>
+                <div class="col-md-9 animate__animated animate__fadeInRight">
+                    <h2 class="fw-bold mb-3">{{ user.username }}</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2"><i class="bi bi-envelope-fill me-2 text-primary"></i> <strong>Email:</strong> {{ user.email }}</p>
+                            <p class="mb-2"><i class="bi bi-telephone-fill me-2 text-success"></i> <strong>Phone:</strong> {{ user.phone_number|default:"N/A" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2"><i class="bi bi-geo-alt-fill me-2 text-danger"></i> <strong>Address:</strong> {{ user.address|default:"N/A" }}</p>
+                            <p class="mb-2"><i class="bi bi-globe2 me-2 text-info"></i> <strong>Website:</strong> 
+                                {% if user.website %}
+                                    <a href="{{ user.website }}" target="_blank">{{ user.website }}</a>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Your Recipes Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeIn">
+        <h2 class="fw-bold">Your Recipes</h2>
+        <a href="{% url 'recipe_create' %}" class="btn btn-success btn-lg animate__animated animate__pulse animate__infinite" style="animation-duration: 2s;">
+            <i class="bi bi-plus-circle"></i> Add New Recipe
+        </a>
+    </div>
+
+    {% if user_recipes %}
+    <div class="row g-4">
+        {% for recipe in user_recipes %}
+        <div class="col-md-4 d-flex">
+            <div class="card h-100 border-0 shadow-sm recipe-card w-100">
+                {% if recipe.image %}
+                    <img src="{{ recipe.image.url }}" class="card-img-top" alt="{{ recipe.title }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <img src="/static/images/recipe-placeholder.jpg" class="card-img-top" alt="Recipe Placeholder" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ recipe.title }}</h5>
+                    <p class="card-text text-muted">{{ recipe.description|truncatewords:20 }}</p>
+                </div>
+                <div class="card-footer bg-transparent border-0">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-sm btn-outline-primary me-md-2">
+                            <i class="bi bi-eye"></i> View
+                        </a>
+                        <a href="{% url 'recipe_update' recipe.pk %}" class="btn btn-sm btn-outline-warning me-md-2">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a href="{% url 'recipe_delete' recipe.pk %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 animate__animated animate__fadeIn">
+        <img src="/static/images/no-recipes.svg" alt="No recipes" class="img-fluid mb-4" style="max-height: 200px;">
+        <h4 class="text-muted mb-3">You haven't created any recipes yet</h4>
+        <a href="{% url 'recipe_create' %}" class="btn btn-success btn-lg animate__animated animate__pulse animate__infinite" style="animation-duration: 2s;">
+            <i class="bi bi-plus-circle"></i> Create Your First Recipe
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .recipe-card {
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .recipe-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(95, 158, 160, 0.1) 0%, rgba(70, 130, 180, 0.1) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 0;
+    }
+
+    .recipe-card:hover {
+        transform: translateY(-8px) rotate(1deg);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .recipe-card:hover::before {
+        opacity: 1;
+    }
+
+    .card-img-top {
+        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .recipe-card:hover .card-img-top {
+        transform: scale(1.1);
+    }
+
+    .btn-outline-primary, .btn-outline-warning, .btn-outline-danger {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-outline-primary::before,
+    .btn-outline-warning::before,
+    .btn-outline-danger::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+
+    .btn-outline-primary::before {
+        background: linear-gradient(135deg, #5f9ea0 0%, #4682b4 100%);
+    }
+
+    .btn-outline-warning::before {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    }
+
+    .btn-outline-danger::before {
+        background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+    }
+
+    .btn-outline-primary:hover,
+    .btn-outline-warning:hover,
+    .btn-outline-danger:hover {
+        color: white;
+        border-color: transparent;
+    }
+
+    .btn-outline-primary:hover::before,
+    .btn-outline-warning:hover::before,
+    .btn-outline-danger:hover::before {
+        opacity: 1;
+    }
+
+    body.dark-mode .card {
+        background-color: #2d2d2d;
+        color: #f8f9fa;
+    }
+
+    body.dark-mode .card-body,
+    body.dark-mode .card-footer {
+        background-color: #2d2d2d;
+    }
+
+    body.dark-mode .text-muted {
+        color: #adb5bd !important;
+    }
+</style>
+{% endblock %}

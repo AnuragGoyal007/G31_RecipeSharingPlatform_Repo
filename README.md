@@ -1,0 +1,1 @@
+# G31_RecipeSharingPlatform_Django_Repo

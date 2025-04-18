@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4 animate__animated animate__fadeIn">
+    <div class="row mb-4">
+        <div class="col-md-6 col-sm-12 mb-3">
+            <h2 class="display-5 fw-bold text-gradient animate__animated animate__fadeInLeft">
+                <i class="bi bi-journal-richtext me-2"></i>
+                Discover Recipes
+            </h2>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3 animate__animated animate__fadeInUp">
+            <form method="get">
+                <select name="category" class="form-select form-select-lg shadow-sm border-0" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    <option value="veg" {% if request.GET.category == 'veg' %}selected{% endif %}>
+                        <i class="bi bi-flower1"></i> Vegetarian
+                    </option>
+                    <option value="nonveg" {% if request.GET.category == 'nonveg' %}selected{% endif %}>
+                        <i class="bi bi-egg-fried"></i> Non-Vegetarian
+                    </option>
+                </select>
+            </form>
+        </div>
+        <div class="col-md-3 col-sm-6 text-end mb-3 animate__animated animate__fadeInRight">
+            {% if user.is_authenticated %}
+                <a href="{% url 'my_recipes' %}" class="btn btn-outline-primary btn-lg w-100 mb-2 hover-float">
+                    <i class="bi bi-person-lines-fill me-2"></i>My Recipes
+                </a>
+            {% endif %}
+            <a href="{% url 'recipe_create' %}" class="btn btn-gradient btn-lg w-100 hover-float">
+                <i class="bi bi-plus-circle-fill me-2"></i>Create Recipe
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for recipe in recipes %}
+        <div class="col-lg-4 col-md-6 col-12 animate__animated animate__fadeInUp" style="animation-delay: {{ forloop.counter|add:2 }}00ms">
+            <div class="recipe-card">
+                {% if recipe.image %}
+                <div class="recipe-image-wrapper">
+                    <img src="{{ recipe.image.url }}" class="recipe-image" alt="{{ recipe.title }}">
+                    <div class="recipe-overlay">
+                        <span class="category-badge {% if recipe.category == 'veg' %}badge-veg{% else %}badge-nonveg{% endif %}">
+                            <i class="bi {% if recipe.category == 'veg' %}bi-flower1{% else %}bi-egg-fried{% endif %} me-1"></i>
+                            {{ recipe.get_category_display }}
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
+                <div class="recipe-content">
+                    <h3 class="recipe-title">{{ recipe.title }}</h3>
+                    <p class="recipe-description">{{ recipe.description|truncatewords:20 }}</p>
+                    <div class="recipe-footer">
+                        <div class="recipe-author">
+                            <i class="bi bi-person-circle me-2"></i>
+                            {{ recipe.created_by.username }}
+                        </div>
+                        <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-primary-outline">
+                            View Recipe <i class="bi bi-arrow-right ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 animate__animated animate__fadeIn">
+            <div class="empty-state">
+                <i class="bi bi-journal-x display-1 mb-4"></i>
+                <h3>No Recipes Found</h3>
+                <p>Be the first to add a delicious recipe!</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    /* Text Gradient */
+    .text-gradient {
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        display: inline-block;
+    }
+
+    /* Recipe Cards */
+    .recipe-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        position: relative;
+    }
+
+    .recipe-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .recipe-image-wrapper {
+        position: relative;
+        padding-top: 65%;
+        overflow: hidden;
+    }
+
+    .recipe-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .recipe-card:hover .recipe-image {
+        transform: scale(1.1);
+    }
+
+    .recipe-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.7));
+        display: flex;
+        align-items: flex-end;
+        padding: 20px;
+    }
+
+    .recipe-content {
+        padding: 25px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .recipe-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: var(--dark-color);
+    }
+
+    .recipe-description {
+        color: var(--bs-gray-600);
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .recipe-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+    }
+
+    .recipe-author {
+        font-size: 0.9rem;
+        color: var(--bs-gray-600);
+        display: flex;
+        align-items: center;
+    }
+
+    /* Badges */
+    .category-badge {
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .badge-veg {
+        background: rgba(25, 135, 84, 0.9);
+        color: white;
+    }
+
+    .badge-nonveg {
+        background: rgba(220, 53, 69, 0.9);
+        color: white;
+    }
+
+    /* Buttons */
+    .btn-gradient {
+        background: var(--gradient-primary);
+        border: none;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .btn-gradient::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--gradient-secondary);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: -1;
+    }
+
+    .btn-gradient:hover::before {
+        opacity: 1;
+    }
+
+    .hover-float {
+        transition: transform 0.3s ease;
+    }
+
+    .hover-float:hover {
+        transform: translateY(-3px);
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow-md);
+        color: var(--bs-gray-600);
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+
+    /* Dark Mode Adjustments */
+    body.dark-mode .recipe-title {
+        color: var(--bs-light);
+    }
+
+    body.dark-mode .recipe-description {
+        color: var(--bs-gray-400);
+    }
+
+    body.dark-mode .recipe-author {
+        color: var(--bs-gray-400);
+    }
+</style>
+{% endblock %}

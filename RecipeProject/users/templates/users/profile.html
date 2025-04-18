@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Mode toggle button -->
+    <div class="d-flex justify-content-end mb-4 animate__animated animate__fadeInRight">
+        <button id="mode-toggle" class="btn btn-outline-secondary btn-circle hover-float">
+            <i class="bi bi-moon-fill"></i>
+        </button>
+    </div>
+
+    <div class="row justify-content-center animate__animated animate__fadeIn">
+        <div class="col-lg-8">
+            <div class="card shadow-2xl border-0 overflow-hidden animate__animated animate__zoomIn">
+                <div class="card-header py-4 text-center position-relative overflow-hidden" 
+                    style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+                    <div class="shine-overlay"></div>
+                    <h2 class="text-white mb-0 fw-bold animate__animated animate__bounceIn">
+                        <i class="bi bi-person-circle me-2"></i>Profile
+                    </h2>
+                </div>
+                <div class="card-body p-5">
+                    <div class="row align-items-center">
+                        <div class="col-md-4 text-center mb-4 mb-md-0">
+                            <div class="profile-picture-container animate__animated animate__zoomIn">
+                                {% if user.profile_picture and user.profile_picture.url %}
+                                    <img src="{{ user.profile_picture.url }}" class="rounded-circle shadow-lg mb-3 profile-image" width="200" height="200" alt="Profile Picture">
+                                {% else %}
+                                    <img src="/static/images/default-profile.png" class="rounded-circle shadow-lg mb-3 profile-image" width="200" height="200" alt="Default Profile Picture">
+                                {% endif %}
+                                <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-sm hover-float">
+                                    <i class="bi bi-camera-fill me-1"></i>Change Photo
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="profile-info animate__animated animate__fadeInRight">
+                                <h3 class="mb-4 fw-bold">
+                                    <span class="text-gradient animate__animated animate__pulse">{{ user.username }}</span>
+                                </h3>
+                                
+                                <div class="mb-4">
+                                    <h5 class="text-muted mb-3 fw-bold">Personal Information</h5>
+                                    <ul class="list-unstyled info-list">
+                                        <li class="mb-3 info-item animate__animated animate__fadeInUp" style="animation-delay: 0.1s">
+                                            <i class="bi bi-envelope-fill me-2 text-primary"></i>
+                                            <strong>Email:</strong> <span class="user-info">{{ user.email }}</span>
+                                        </li>
+                                        <li class="mb-3 info-item animate__animated animate__fadeInUp" style="animation-delay: 0.2s">
+                                            <i class="bi bi-person-lines-fill me-2 text-success"></i>
+                                            <strong>Bio:</strong> <span class="user-info">{{ user.bio|default:"No bio available." }}</span>
+                                        </li>
+                                        <li class="mb-3 info-item animate__animated animate__fadeInUp" style="animation-delay: 0.3s">
+                                            <i class="bi bi-calendar-event me-2 text-info"></i>
+                                            <strong>Member since:</strong> <span class="user-info">{{ user.date_joined|date:"jS F Y" }}</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="d-flex gap-3 animate__animated animate__fadeInUp" style="animation-delay: 0.4s">
+                                    <a href="{% url 'edit_profile' %}" class="btn btn-gradient px-4 py-2 hover-float">
+                                        <i class="bi bi-pencil-fill me-2"></i>Edit Profile
+                                    </a>
+                                    <a href="{% url 'change_password' %}" class="btn btn-outline-secondary px-4 py-2 hover-float">
+                                        <i class="bi bi-key-fill me-2"></i>Change Password
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: url('/static/images/profile-bg.jpg') no-repeat center center fixed;
+        background-size: cover;
+        min-height: 100vh;
+        transition: all 0.3s ease;
+    }
+    
+    .card {
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .shine-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            45deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.1) 50%,
+            transparent 100%
+        );
+        animation: shine 3s infinite;
+    }
+    
+    .btn-circle {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .text-gradient {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    
+    .profile-info {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .profile-picture-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .profile-image {
+        border: 5px solid rgba(255,255,255,0.8);
+        object-fit: cover;
+        transition: all 0.3s ease;
+    }
+
+    .profile-image:hover {
+        transform: scale(1.05);
+    }
+
+    .info-item {
+        padding: 10px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .info-item:hover {
+        background: rgba(106, 17, 203, 0.05);
+        transform: translateX(10px);
+    }
+
+    .hover-float {
+        transition: all 0.3s ease;
+    }
+
+    .hover-float:hover {
+        transform: translateY(-3px);
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        color: white;
+        border: none;
+    }
+
+    @keyframes shine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    
+    /* Light Mode Styles (default) */
+    .user-info {
+        color: #495057;
+        transition: color 0.3s ease;
+    }
+    
+    /* Dark Mode Styles */
+    body.dark-mode {
+        background-color: #121212;
+        color: #f8f9fa;
+    }
+    
+    body.dark-mode .card {
+        background: rgba(30, 30, 30, 0.98);
+    }
+    
+    body.dark-mode .profile-info {
+        background-color: rgba(45, 45, 45, 0.95);
+    }
+    
+    body.dark-mode .user-info {
+        color: #e9ecef;
+    }
+    
+    body.dark-mode .text-muted {
+        color: #adb5bd !important;
+    }
+    
+    body.dark-mode .btn-outline-secondary {
+        color: #f8f9fa;
+        border-color: #f8f9fa;
+    }
+
+    body.dark-mode .info-item:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+</style>
+
+<script>
+    document.getElementById('mode-toggle').addEventListener('click', function () {
+        document.body.classList.toggle('dark-mode');
+        
+        if (document.body.classList.contains('dark-mode')) {
+            this.innerHTML = '<i class="bi bi-sun-fill"></i>';
+        } else {
+            this.innerHTML = '<i class="bi bi-moon-fill"></i>';
+        }
+    });
+
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-mode');
+        document.getElementById('mode-toggle').innerHTML = '<i class="bi bi-sun-fill"></i>';
+    }
+
+    document.getElementById('mode-toggle').addEventListener('click', function () {
+        if (document.body.classList.contains('dark-mode')) {
+            localStorage.setItem('theme', 'dark');
+        } else {
+            localStorage.setItem('theme', 'light');
+        }
+    });
+</script>
+{% endblock %}

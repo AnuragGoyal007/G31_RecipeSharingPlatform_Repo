@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="background-color: #f8f9fa;">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header py-4 text-center"
+                    style="background: linear-gradient(135deg, #5f9ea0 0%, #4682b4 100%);">
+                    <h2 class="text-white mb-0"><i class="bi bi-journal-plus me-2"></i> Create New Recipe</h2>
+                </div>
+
+                <div class="card-body p-5 bg-white">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+
+                        <!-- 1. BASIC INFORMATION -->
+                        <div class="mb-5">
+                            <h4 class="mb-4 pb-2 text-teal border-bottom"><i class="bi bi-info-circle me-2"></i>Basic
+                                Information</h4>
+
+                            <div class="row g-3">
+                                <!-- Recipe Title -->
+                                <div class="col-12">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="{{ form.title.id_for_label }}"
+                                            name="{{ form.title.name }}" placeholder="Recipe Title"
+                                            value="{{ form.title.value|default:'' }}" required>
+                                        <label for="{{ form.title.id_for_label }}">Recipe Title*</label>
+                                        {% if form.title.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.title.errors.0 }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Category & Description -->
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" id="{{ form.category.id_for_label }}" name="{{ form.category.name }}" required>
+                                            {% if form.category.field.choices %}
+                                                {% for value, label in form.category.field.choices %}
+                                                    <option value="{{ value }}" {% if form.category.value == value %}selected{% endif %}>
+                                                        {{ label }}
+                                                    </option>
+                                                {% endfor %}
+                                            {% else %}
+                                                <option value="">No categories available</option>
+                                            {% endif %}
+                                        </select>
+                                        <label for="{{ form.category.id_for_label }}">Category*</label>
+                                        {% if form.category.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {{ form.category.errors.0 }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating mb-3">
+                                        <textarea class="form-control" id="{{ form.description.id_for_label }}"
+                                            name="{{ form.description.name }}" placeholder="Description"
+                                            style="height: 100px"
+                                            required>{{ form.description.value|default:'' }}</textarea>
+                                        <label for="{{ form.description.id_for_label }}">Description*</label>
+                                        {% if form.description.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.description.errors.0 }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. MEDIA -->
+                        <div class="mb-5">
+                            <h4 class="mb-4 pb-2 text-teal border-bottom"><i class="bi bi-image me-2"></i>Media</h4>
+
+                            <div class="row g-3">
+                                <!-- Image Upload -->
+                                <div class="col-12">
+                                    <label class="form-label">Recipe Image</label>
+                                    <input type="file" class="form-control" id="{{ form.image.id_for_label }}"
+                                        name="{{ form.image.name }}" accept="image/*">
+                                    {% if form.image.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.image.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                    <small class="text-muted">Upload a high-quality image of your recipe</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. RECIPE DETAILS -->
+                        <div class="mb-5">
+                            <h4 class="mb-4 pb-2 text-teal border-bottom"><i class="bi bi-list-check me-2"></i>Recipe
+                                Details</h4>
+
+                            <div class="row g-3">
+                                <!-- Ingredients -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Ingredients*</label>
+                                        <textarea class="form-control" id="{{ form.ingredients.id_for_label }}"
+                                            name="{{ form.ingredients.name }}" style="min-height: 200px"
+                                            required>{{ form.ingredients.value|default:'' }}</textarea>
+                                        {% if form.ingredients.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.ingredients.errors.0 }}
+                                        </div>
+                                        {% endif %}
+                                        <small class="text-muted">Enter ingredients separated by commas</small>
+                                    </div>
+                                </div>
+
+                                <!-- Cooking Method (Instructions) -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label">Cooking Method*</label>
+                                        <textarea class="form-control" id="{{ form.cooking_method.id_for_label }}"
+                                            name="{{ form.cooking_method.name }}" style="min-height: 200px"
+                                            required>{{ form.cooking_method.value|default:'' }}</textarea>
+                                        {% if form.cooking_method.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.cooking_method.errors.0 }}
+                                        </div>
+                                        {% endif %}
+                                        <small class="text-muted">Enter steps separated by commas</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. ADDITIONAL INFO -->
+                        <div class="mb-5">
+                            <h4 class="mb-4 pb-2 text-teal border-bottom"><i class="bi bi-clock me-2"></i>Cooking
+                                Details</h4>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control"
+                                            id="{{ form.cooking_time.id_for_label }}"
+                                            name="{{ form.cooking_time.name }}" placeholder="Cooking time"
+                                            value="{{ form.cooking_time.value|default:'' }}" required>
+                                        <label for="{{ form.cooking_time.id_for_label }}">Cooking Time (mins)*</label>
+                                        {% if form.cooking_time.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.cooking_time.errors.0 }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control"
+                                            id="{{ form.calorie_count.id_for_label }}"
+                                            name="{{ form.calorie_count.name }}" placeholder="Calorie count"
+                                            value="{{ form.calorie_count.value|default:'' }}" required>
+                                        <label for="{{ form.calorie_count.id_for_label }}">Calories (kcal)*</label>
+                                        {% if form.calorie_count.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.calorie_count.errors.0 }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control"
+                                            id="{{ form.allergic_content.id_for_label }}"
+                                            name="{{ form.allergic_content.name }}" placeholder="Allergens"
+                                            value="{{ form.allergic_content.value|default:'' }}">
+                                        <label for="{{ form.allergic_content.id_for_label }}">Allergens
+                                            (optional)</label>
+                                        {% if form.allergic_content.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ form.allergic_content.errors.0 }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SUBMIT BUTTON -->
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-teal btn-lg py-3 rounded-3 shadow-sm" style="background: linear-gradient(135deg, #5f9ea0 0%, #4682b4 100%);">
+                                <i class="bi bi-send-check me-2"></i> Publish Recipe
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

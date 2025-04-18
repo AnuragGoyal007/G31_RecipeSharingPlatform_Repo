@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden animate__animated animate__shakeX">
+                <div class="card-header py-4 text-center bg-danger text-white">
+                    <h2 class="mb-0"><i class="bi bi-exclamation-triangle-fill me-2"></i> Delete Recipe</h2>
+                </div>
+                <div class="card-body p-5 text-center">
+                    <div class="alert alert-danger animate__animated animate__pulse" role="alert">
+                        <h4 class="alert-heading"><i class="bi bi-exclamation-octagon-fill me-2"></i> Warning!</h4>
+                        <p class="mb-0">You are about to permanently delete "<strong>{{ recipe.title }}</strong>". This action cannot be undone.</p>
+                    </div>
+                    
+                    {% if recipe.image %}
+                    <div class="mb-4 animate__animated animate__fadeIn">
+                        <img src="{{ recipe.image.url }}" class="img-fluid rounded-3 shadow" alt="Recipe Image" style="max-height: 250px; border: 3px solid #dc3545;">
+                    </div>
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
+                            <a href="{% url 'recipe_detail' recipe.pk %}" class="btn btn-outline-secondary px-4 py-3 rounded-3">
+                                <i class="bi bi-arrow-left-circle me-2"></i> Go Back
+                            </a>
+                            <button type="submit" class="btn btn-delete px-4 py-3 rounded-3 shadow-sm">
+                                <span class="submit-text"><i class="bi bi-trash3-fill me-2"></i> Confirm Delete</span>
+                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Delete-specific styles */
+    .btn-delete {
+        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        transition: all 0.4s ease;
+    }
+    
+    .btn-delete:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 25px rgba(255, 65, 108, 0.3);
+        animation: pulse-danger 0.5s infinite alternate;
+    }
+    
+    @keyframes pulse-danger {
+        from { transform: translateY(-3px) scale(1.02); }
+        to { transform: translateY(-3px) scale(1.05); }
+    }
+    
+    .alert-danger {
+        border-left: 5px solid #ff4b2b;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteBtn = document.querySelector('.btn-delete');
+        
+        deleteBtn.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-3px) scale(1.02)';
+        });
+        
+        deleteBtn.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.animation = 'none';
+        });
+        
+        // Form submission loader
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            deleteBtn.disabled = true;
+            deleteBtn.querySelector('.submit-text').classList.add('d-none');
+            deleteBtn.querySelector('.spinner-border').classList.remove('d-none');
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+            <div class="form-box p-4 shadow-lg rounded-4">
+                <h2 class="text-center fw-bold mb-4">Edit Profile</h2>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="mb-4">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="d-flex justify-content-between mt-4 flex-wrap gap-2">
+                        <a href="{% url 'profile' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+                        <button type="submit" class="btn btn-success px-4">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-box {
+        background: #fffef9;
+        backdrop-filter: blur(10px);
+        border: 1px solid #e0d6c3;
+        border-radius: 1.5rem;
+        animation: slideIn 0.4s ease;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1px solid #d9cfc1;
+        border-radius: 10px;
+        background-color: #fdfbf6;
+        transition: 0.3s ease;
+    }
+
+    input:focus, textarea:focus, select:focus {
+        border-color: #b29f88;
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(178, 159, 136, 0.2);
+    }
+
+    label {
+        color: #6a5d4d;
+    }
+</style>
+{% endblock %}

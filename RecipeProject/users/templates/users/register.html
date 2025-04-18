@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center animate__animated animate__fadeInUp">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-2xl border-0 rounded-4 overflow-hidden animate__animated animate__zoomIn">
+                <div class="card-header py-4 text-center position-relative overflow-hidden" 
+                    style="background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);">
+                    <div class="shine-overlay"></div>
+                    <h2 class="text-white mb-0 fw-bold animate__animated animate__bounceIn">
+                        <i class="bi bi-person-plus-fill me-2"></i>Join Our Community
+                    </h2>
+                </div>
+                <div class="card-body p-5 glass-morphism">
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="form-steps">
+                            {% for field in form %}
+                                <div class="form-group">
+                                    <div class="form-header">
+                                        <div class="icon-wrapper">
+                                            <i class="bi bi-chevron-right form-icon pulse"></i>
+                                        </div>
+                                        <label for="{{ field.id_for_label }}" class="form-label glow-text">{{ field.label }}</label>
+                                    </div>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted floating-text">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                        <div class="invalid-feedback d-block shake-animation">
+                                            <i class="bi bi-exclamation-diamond-fill"></i> {{ error }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="d-grid mt-5">
+                            <button type="submit" class="btn btn-register btn-lg py-3 rounded-pill shadow-pulse animate__animated animate__heartBeat">
+                                <span class="btn-text-wrapper">
+                                    <i class="bi bi-rocket-takeoff-fill me-2"></i>
+                                    Launch Your Journey
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-4 bg-transparent">
+                    <p class="mb-0 animate__animated animate__fadeIn">Already part of our community? 
+                        <a href="{% url 'login' %}" class="text-decoration-none fw-bold gradient-text">Sign in here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes shine {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .shine-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.3) 50%,
+            rgba(255,255,255,0) 100%
+        );
+        animation: shine 3s infinite;
+    }
+
+    .glass-morphism {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+    }
+
+    .form-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .form-step {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        border-left: 6px solid #4ECDC4;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .form-step:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+    }
+
+    .icon-wrapper {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .form-icon {
+        color: white;
+        animation: pulse 2s infinite;
+    }
+
+    .form-label {
+        font-size: 1.1rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .form-control {
+        height: 3.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        border: 2px solid rgba(78, 205, 196, 0.2);
+        transition: all 0.3s ease;
+        font-size: 1.1rem;
+    }
+    
+    .form-control:focus {
+        border-color: #4ECDC4;
+        box-shadow: 0 0 0 0.25rem rgba(78, 205, 196, 0.25);
+        transform: scale(1.02);
+    }
+
+    .btn-register {
+        background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+        border: none;
+        font-size: 1.2rem;
+        font-weight: 700;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .btn-register:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(255, 107, 107, 0.3);
+    }
+
+    .shadow-pulse {
+        animation: shadow-pulse 2s infinite;
+    }
+
+    @keyframes shadow-pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4);
+        }
+        70% {
+            box-shadow: 0 0 0 20px rgba(255, 107, 107, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(255, 107, 107, 0);
+        }
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        transition: all 0.3s ease;
+    }
+
+    .gradient-text:hover {
+        transform: scale(1.1);
+    }
+
+    .floating-text {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .shake-animation {
+        animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes shake {
+        10%, 90% { transform: translate3d(-1px, 0, 0); }
+        20%, 80% { transform: translate3d(2px, 0, 0); }
+        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+        40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+
+    body.dark-mode .form-step {
+        background: rgba(30, 30, 30, 0.8);
+        border-color: #4ECDC4;
+    }
+
+    body.dark-mode .form-control {
+        background: rgba(40, 40, 40, 0.9);
+        color: #fff;
+    }
+
+    body.dark-mode .glass-morphism {
+        background: rgba(30, 30, 30, 0.7);
+    }
+</style>
+
+<script>
+    // Form validation
+    (function () {
+        'use strict'
+        var forms = document.querySelectorAll('.needs-validation')
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+    
+    // Enhanced form interactions
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+            } else {
+                this.classList.add('is-invalid');
+            }
+        });
+
+        input.addEventListener('focus', function() {
+            this.style.transform = 'scale(1.02)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+</script>
+{% endblock %}
