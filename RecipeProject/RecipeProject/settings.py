@@ -50,7 +50,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.http.ConditionalGetMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
+
+CACHE_MIDDLEWARE_SECONDS = 0
+CACHE_MIDDLEWARE_ALIAS = 'none'
+
+CSRF_FAILURE_VIEW = 'users.views.csrf_failure'
 
 ROOT_URLCONF = 'RecipeProject.urls'
 
@@ -127,6 +134,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/users/login'
+LOGIN_REDIRECT_URL = 'dashboard'
 
 AUTH_USER_MODEL = 'users.CustomUser'
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']

@@ -8,11 +8,11 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
 
-    list_display = ['username', 'email', 'user_type', 'profile_picture']
+    list_display = ['username', 'email', 'is_superuser', 'profile_picture']
+    list_filter = ['is_superuser']
 
     fieldsets = UserAdmin.fieldsets + (
         (None, {'fields': ('profile_picture', 'bio', 'phone_number', 'address', 'date_of_birth', 'website')}),
-        ('Additional Info', {'fields': ('user_type',)}),
     )
 
     add_fieldsets = (
@@ -20,8 +20,8 @@ class CustomUserAdmin(UserAdmin):
             'classes': ('wide',),
             'fields': (
                 'username', 'email', 'password1', 'password2',
-                'user_type', 'profile_picture', 'bio',
-                'phone_number', 'address', 'date_of_birth', 'website',
+                'profile_picture', 'bio', 'phone_number', 
+                'address', 'date_of_birth', 'website',
             ),
         }),
     )
