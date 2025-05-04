@@ -470,6 +470,56 @@
             0%, 100% { opacity: 0.8; }
             50% { opacity: 1; }
         }
+
+        /* Alert Messages */
+.alert {
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    border: none;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+}
+
+.alert-success {
+    background: rgba(25, 135, 84, 0.9);
+    color: white;
+}
+
+.alert-info {
+    background: rgba(13, 110, 253, 0.9);
+    color: white;
+}
+
+.alert-warning {
+    background: rgba(255, 193, 7, 0.9);
+    color: var(--dark-color);
+}
+
+.alert-danger {
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+}
+
+.alert-dismissible .btn-close {
+    filter: invert(1);
+}
+
+/* Animation for alert */
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.alert {
+    animation: slideIn 0.5s ease-out;
+}
     </style>
 </head>
 
@@ -559,6 +609,19 @@
 
     <!-- Main Content -->
     <main class="container my-5 flex-grow-1">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
         {% block content %}{% endblock %}
     </main>
 
@@ -614,6 +677,17 @@
                 localStorage.setItem('dark-mode', 'false');
             }
         });
+
+        // Auto-dismiss alerts after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        }, 5000);
+    });
+});
     </script>
 
     {% block scripts %}{% endblock %}

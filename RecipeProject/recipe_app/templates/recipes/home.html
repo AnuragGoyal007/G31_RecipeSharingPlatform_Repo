@@ -74,6 +74,27 @@
         </div>
         {% endfor %}
     </div>
+    <div class="row mt-5 animate__animated animate__fadeIn">
+        <div class="col-12 text-center mb-4">
+            <h2 class="display-5 fw-bold text-gradient">
+                <i class="bi bi-chat-square-text me-2"></i>
+                Have Questions?
+            </h2>
+            <p class="lead">We'd love to hear from you!</p>
+        </div>
+        <div class="col-md-6 offset-md-3">
+            <div class="card shadow-sm hover-float">
+                <div class="card-body text-center p-4">
+                    <i class="bi bi-envelope-paper-heart display-4 text-gradient mb-3"></i>
+                    <h3 class="h4 mb-3">Contact Us</h3>
+                    <p class="mb-4">Send us your feedback, questions, or suggestions.</p>
+                    <a href="{% url 'contact_us' %}" class="btn btn-gradient">
+                        <i class="bi bi-arrow-right me-2"></i> Get in Touch
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>

@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Recipe, Comment
+from .models import Recipe, Comment, ContactMessage
 from .forms import RecipeForm, CommentForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
-from .forms import RecipeForm, CommentForm
+from .forms import RecipeForm, CommentForm, ContactForm
+from django.contrib import messages
 
 
 def home(request):
@@ -129,3 +130,21 @@ def delete_comment(request, pk):
         comment.delete()
         return redirect('recipe_detail', pk=comment.recipe.pk)
     return render(request, 'recipes/delete_comment.html', {'comment': comment})
+
+# # Contact Form View
+def contact_us(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            ContactMessage.objects.create(
+                name=form.cleaned_data['name'],
+                email=form.cleaned_data['email'],
+                subject=form.cleaned_data['subject'],
+                message=form.cleaned_data['message']
+            )
+            messages.success(request, 'Your message has been sent successfully!')
+            return redirect('home')
+    else:
+        form = ContactForm()
+    
+    return render(request, 'recipes/contact_us.html', {'form': form})

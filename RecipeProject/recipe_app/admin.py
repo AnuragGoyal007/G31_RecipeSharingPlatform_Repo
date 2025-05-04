@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Recipe, Comment
+from .models import Recipe, Comment, ContactMessage
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
@@ -17,3 +17,12 @@ class CommentAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at',)
     ordering = ('-created_at',)
     
+# # Contact Form Model
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'subject', 'created_at', 'is_read')
+    list_filter = ('is_read', 'created_at')
+    search_fields = ('name', 'email', 'subject')
+    readonly_fields = ('created_at',)
+    list_editable = ('is_read',)
+    ordering = ('-created_at',)
