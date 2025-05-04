@@ -520,6 +520,61 @@
 .alert {
     animation: slideIn 0.5s ease-out;
 }
+
+/* Contact Card in Footer */
+.contact-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.contact-card h2 {
+    font-weight: 600;
+    background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Contact Card in Footer */
+.contact-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.1); /* This prevents the white background */
+}
+
+/* Dark mode adjustments */
+body.dark-mode .contact-card {
+    background: rgba(45, 45, 45, 0.7);
+}
+
+body.dark-mode .contact-card:hover {
+    background: rgba(45, 45, 45, 0.7); /* Maintain dark background on hover */
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
     </style>
 </head>
 
@@ -625,34 +680,53 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="social-links">
-                        <h5>Anurag's Social Media</h5>
-                        <a href="https://linkedin.com/in/anurag-goyal-885264304" class="text-white mx-2"><i class="bi bi-linkedin"></i></a>
-                        <a href="https://x.com/logicalmind0891" class="text-white mx-2"><i class="bi bi-x"></i></a>
-                        <a href="https://www.instagram.com/anurag__2203/" class="text-white mx-2"><i class="bi bi-instagram"></i></a>
-                        <a href="https://github.com/AnuragGoyal007" class="text-white mx-2"><i class="bi bi-github"></i></a>
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <!-- Contact Us Section -->
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8">
+                <div class="card contact-card">
+                    <div class="card-body p-4 text-center">
+                        <h2 class="mb-4">
+                            <i class="bi bi-chat-square-text me-2"></i>
+                            Contact Us
+                        </h2>
+                        <p class="mb-4">Have questions or feedback? We'd love to hear from you!</p>
+                        <a href="{% url 'contact_us' %}" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-envelope-paper-heart me-2"></i> Send a Message
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="social-links">
-                        <h5>Bhargav's Social Media</h5>
-                        <a href="https://www.linkedin.com/in/bhargav-sharma-876384324" class="text-white mx-2"><i class="bi bi-linkedin"></i></a>
-                        <a href="https://x.com/BhargavSha62833" class="text-white mx-2"><i class="bi bi-x"></i></a>
-                        <a href="https://www.instagram.com/.bha_rg_v./" class="text-white mx-2"><i class="bi bi-instagram"></i></a>
-                        <a href="https://github.com/Bhargav-bit567" class="text-white mx-2"><i class="bi bi-github"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="text-center mt-3">
-                <p class="mb-0">&copy; {% now "Y" %} Savoré. All rights reserved.</p>
             </div>
         </div>
-    </footer>
+
+        <!-- Social Media Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="social-links">
+                    <h5>Anurag's Social Media</h5>
+                    <a href="https://linkedin.com/in/anurag-goyal-885264304" class="text-white mx-2"><i class="bi bi-linkedin"></i></a>
+                    <a href="https://x.com/logicalmind0891" class="text-white mx-2"><i class="bi bi-x"></i></a>
+                    <a href="https://www.instagram.com/anurag__2203/" class="text-white mx-2"><i class="bi bi-instagram"></i></a>
+                    <a href="https://github.com/AnuragGoyal007" class="text-white mx-2"><i class="bi bi-github"></i></a>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="social-links">
+                    <h5>Bhargav's Social Media</h5>
+                    <a href="https://www.linkedin.com/in/bhargav-sharma-876384324" class="text-white mx-2"><i class="bi bi-linkedin"></i></a>
+                    <a href="https://x.com/BhargavSha62833" class="text-white mx-2"><i class="bi bi-x"></i></a>
+                    <a href="https://www.instagram.com/.bha_rg_v./" class="text-white mx-2"><i class="bi bi-instagram"></i></a>
+                    <a href="https://github.com/Bhargav-bit567" class="text-white mx-2"><i class="bi bi-github"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <p class="mb-0">&copy; {% now "Y" %} Savoré. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
 
     <!-- Bootstrap JS (required for dropdowns) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
