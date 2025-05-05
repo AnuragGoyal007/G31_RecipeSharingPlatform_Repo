@@ -13,20 +13,24 @@ from django.contrib.auth.forms import AuthenticationForm
 
 #--------------------------------------------------------------------------------------------------------------
 
-from .api_client import FlaskAPIClient
+from .api_client import FlaskAPIClient, FlaskAPIError
 
 
 def recipe_list(request):
     client = FlaskAPIClient()
     
-    # Example: Login first if needed
-    # client.login('admin', 'password')
-    
     try:
         recipes = client.get_recipes()
+        if not recipes:  # Handle empty response
+            messages.warning(request, 'No recipes found')
+            recipes = []
         return render(request, 'recipes/list.html', {'recipes': recipes})
+    except FlaskAPIError as e:
+        messages.error(request, f'API Error: {str(e)}')
+        return render(request, 'recipes/list.html', {'recipes': []})
     except Exception as e:
-        return render(request, 'error.html', {'message': str(e)})
+        messages.error(request, f'Unexpected error: {str(e)}')
+        return render(request, 'recipes/list.html', {'recipes': []})
     
 
 def flask_recipe_detail(request, pk):
@@ -92,6 +96,47 @@ def user_logout(request):
     # Add success message and redirect
     messages.success(request, 'You have been successfully logged out.')
     return redirect('home')  # or your preferred redirect target
+
+@login_required
+def flask_recipe_create(request):
+    if not request.session.get('flask_token'):
+        messages.error(request, "Please login to create recipes")
+        return redirect('user_login')
+
+    if request.method == 'POST':
+        try:
+            form_data = {
+                'title': request.POST.get('title'),
+                'description': request.POST.get('description'),
+                'ingredients': request.POST.get('ingredients'),
+                'cooking_method': request.POST.get('cooking_method'),
+                'calorie_count': int(request.POST.get('calorie_count')),
+                'cooking_time': int(request.POST.get('cooking_time')),
+                'category': request.POST.get('category'),
+                'user_id': request.user.id
+            }
+            
+            client = FlaskAPIClient(request)
+            response = client.create_recipe(form_data)
+            messages.success(request, "Recipe created successfully!")
+            return redirect('flask_recipe_detail', pk=response.get('id'))
+            
+        except ValueError as e:
+            messages.error(request, f"Invalid data: {str(e)}")
+        except FlaskAPIError as e:
+            messages.error(request, f"API Error: {str(e)}")
+        except Exception as e:
+            messages.error(request, f"Unexpected error: {str(e)}")
+        
+        # Preserve form data on error
+        return render(request, 'recipes/flask_recipe_create.html', {
+            'form_data': request.POST.dict(),
+            'error': str(e) if 'e' in locals() else None
+        })
+    
+    return render(request, 'recipes/flask_recipe_create.html')
+
+
 
 
 #----------------------------------------------------------------------------------

@@ -592,6 +592,11 @@ body.dark-mode .contact-card:hover {
     
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <li class="nav-item me-2">
+                        <a class="nav-link" href="{% url 'recipe_list' %}">
+                            <i class="bi bi-house me-1"></i> 
+                            <span class="nav-link-text">All Recipes using flask</span>
+                        </a>
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown me-2">
                         <a class="nav-link dropdown-toggle" href="#" id="recipesDropdown" role="button"

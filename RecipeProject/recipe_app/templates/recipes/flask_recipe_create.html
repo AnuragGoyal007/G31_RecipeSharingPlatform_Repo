@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2>Create New Recipe (Flask API)</h2>
+            
+            {% if error %}
+            <div class="alert alert-danger">
+                <strong>Error:</strong> {{ error }}
+                {% if suggestion %}
+                <p class="mt-2">{{ suggestion }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title*</label>
+                    <input type="text" class="form-control" id="title" name="title" 
+                        value="{{ form_data.title|default:'' }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description*</label>
+                    <textarea class="form-control" id="description" name="description" 
+                            rows="3" required>{{ form_data.description|default:'' }}</textarea>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="ingredients" class="form-label">Ingredients*</label>
+                    <textarea class="form-control" id="ingredients" name="ingredients" 
+                            rows="5" required>{{ form_data.ingredients|default:'' }}</textarea>
+                    <small class="text-muted">Enter each ingredient on a new line</small>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="cooking_method" class="form-label">Cooking Method*</label>
+                    <textarea class="form-control" id="cooking_method" name="cooking_method" 
+                            rows="5" required>{{ form_data.cooking_method|default:'' }}</textarea>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="calorie_count" class="form-label">Calories*</label>
+                        <input type="number" class="form-control" id="calorie_count" name="calorie_count" 
+                            value="{{ form_data.calorie_count|default:'' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="cooking_time" class="form-label">Cooking Time (minutes)*</label>
+                        <input type="number" class="form-control" id="cooking_time" name="cooking_time" 
+                            value="{{ form_data.cooking_time|default:'' }}" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="category" class="form-label">Category*</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="veg" {% if form_data.category|default:'' == 'veg' %}selected{% endif %}>Vegetarian</option>
+                            <option value="nonveg" {% if form_data.category|default:'' == 'nonveg' %}selected{% endif %}>Non-Vegetarian</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{% url 'recipe_list' %}" class="btn btn-secondary me-md-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Create Recipe</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

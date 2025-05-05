@@ -99,13 +99,23 @@ class FlaskAPIClient:
     def create_recipe(self, recipe_data):
         """Create a new recipe"""
         required_fields = [
-            'title', 'description', 'ingredients', 'cooking_method',
-            'calorie_count', 'cooking_time', 'category', 'user_id'
-        ]
+        'title', 'description', 'ingredients', 'cooking_method',
+        'calorie_count', 'cooking_time', 'category', 'user_id'
+    ]
         if not all(field in recipe_data for field in required_fields):
-            raise ValueError("Missing required recipe fields")
-        
-        return self._make_request('POST', '/api/recipes', data=recipe_data, requires_auth=True)
+            missing = [field for field in required_fields if field not in recipe_data]
+            raise ValueError(f"Missing required recipe fields: {missing}")
+    
+        print("Sending to API:", recipe_data)  # Debug print
+        print("API URL:", f"{self.base_url}/api/recipes")  # Debug print
+    
+        try:
+            response = self._make_request('POST', '/api/recipes', data=recipe_data, requires_auth=True)
+            print("API Response:", response)  # Debug print
+            return response
+        except Exception as e:
+            print("API Request Failed:", str(e))  # Debug print
+        raise
     
     def update_recipe(self, recipe_id, recipe_data):
         """Update an existing recipe"""
