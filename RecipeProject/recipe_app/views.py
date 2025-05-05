@@ -5,7 +5,96 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from .forms import RecipeForm, CommentForm, ContactForm
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login as django_login, authenticate
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
 
+#--------------------------------------------------------------------------------------------------------------
+
+from .api_client import FlaskAPIClient
+
+
+def recipe_list(request):
+    client = FlaskAPIClient()
+    
+    # Example: Login first if needed
+    # client.login('admin', 'password')
+    
+    try:
+        recipes = client.get_recipes()
+        return render(request, 'recipes/list.html', {'recipes': recipes})
+    except Exception as e:
+        return render(request, 'error.html', {'message': str(e)})
+    
+
+def flask_recipe_detail(request, pk):
+    client = FlaskAPIClient()
+    try:
+        recipe = client.get_recipe(pk)  # Assuming get_recipe is a method in FlaskAPIClient
+        return render(request, 'recipes/flask_recipe_detail.html', {'recipe': recipe})
+    except Exception as e:
+        return render(request, 'error.html', {'message': str(e)})
+    
+    
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        if not username or not password:
+            messages.error(request, 'Both username and password are required')
+            return render(request, 'users/login.html')
+        
+        # Authenticate via Flask API
+        client = FlaskAPIClient()
+        try:
+            auth_result = client.login(username, password)
+            
+            if auth_result and auth_result.get('access_token'):
+                # Get or create Django user
+                user, created = User.objects.get_or_create(
+                    username=username,
+                    defaults={
+                        'email': auth_result.get('user', {}).get('email', ''),
+                        'is_active': True
+                    }
+                )
+                
+                if created:
+                    user.set_unusable_password()
+                    user.save()
+                
+                # Store Flask token in session
+                request.session['flask_token'] = auth_result['access_token']
+                
+                # Login user in Django
+                django_login(request, user)
+                messages.success(request, 'Logged in successfully!')
+                return redirect('home')
+            
+            messages.error(request, 'Invalid credentials')
+        except Exception as e:
+            messages.error(request, f'Login failed: {str(e)}')
+    
+    return render(request, 'users/login.html')
+
+@login_required
+def user_logout(request):
+    # Clear the Flask API token from session
+    if 'flask_token' in request.session:
+        del request.session['flask_token']
+    
+    # Perform Django logout
+    django_logout(request)
+    
+    # Add success message and redirect
+    messages.success(request, 'You have been successfully logged out.')
+    return redirect('home')  # or your preferred redirect target
+
+
+#----------------------------------------------------------------------------------
 
 def home(request):
     category = request.GET.get('category')

@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-ea2=cl@cxcm&0boe*jplra!pxu4-5)97b3m)sz-)r1y*#p*j$3
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+FLASK_API_URL = 'http://localhost:5000'
 
 # Application definition
 

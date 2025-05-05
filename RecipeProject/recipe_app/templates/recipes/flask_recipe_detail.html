@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>{{ recipe.title }}</h2>
+<div class="card">
+    {% if recipe.image %}
+    <img src="{{ recipe.image }}" class="card-img-top" alt="{{ recipe.title }}">
+    {% endif %}
+    <div class="card-body">
+        <p class="card-text">{{ recipe.description }}</p>
+        <!-- Add more fields as needed -->
+    </div>
+</div>
+{% endblock %}
